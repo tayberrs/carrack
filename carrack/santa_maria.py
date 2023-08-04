@@ -1,25 +1,22 @@
-from flask import Flask, jsonify, request
+from flask import (
+    Blueprint, jsonify
+)
 import string, random
 
-from model.santa_maria import Cargo, CargoSchema
-from model.cargo_type import CargoType
+from carrack.entity.cargo import Cargo, CargoSchema
+from carrack.entity.cargo_type import CargoType
 
-app = Flask(__name__)
-
+bp = Blueprint('santa_maria', __name__, url_prefix='/santa-maria')
 
 
 cargos = [Cargo("Seed Money", 100000, 1)]
 
-@app.route("/")
-def hello_world():
-    return "hello"
-
-@app.route("/cargo")
+@bp.route("/cargo")
 def get_manifest():
     schema = CargoSchema(many=True)
     return jsonify(schema.dump(cargos))
 
-@app.route("/cargo", methods = ['POST'])
+@bp.route("/cargo", methods = ['POST'])
 def add_cargo():
     description = ''.join(random.choices(string.ascii_lowercase, k = 6))
     cargo = CargoSchema().load({
